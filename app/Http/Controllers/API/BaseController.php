@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\API;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller as Controller;
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class BaseController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * success response method.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendResponse($result, $message = null)
+    public function sendResponse($result, $message = null, $code = 200)
     {
         $response = [
             'success' => true,
@@ -20,7 +22,7 @@ class BaseController extends Controller
             'message' => $message,
         ];
 
-        return response()->json($response, 200);
+        return response()->json($response, $code);
     }
 
     /**
@@ -35,7 +37,7 @@ class BaseController extends Controller
             'message' => $error,
         ];
 
-        if(!empty($errorMessages)){
+        if (!empty($errorMessages)) {
             $response['data'] = $errorMessages;
         }
 
