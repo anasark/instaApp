@@ -7,6 +7,7 @@ use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
@@ -19,9 +20,14 @@ class PostController extends BaseController
      */
     public function index()
     {
-        $posts = Post::with(['user', 'comments', 'likes'])->latest()->get();
+        $response = Http::post(url('/graphql'), [
+            'query' => 'query { posts { id user_id caption image user { id name email } comments { id user_id post_id content user { id name email } } likes { id user_id post_id } } }',
+            'variables' => [],
+        ]);
 
-        return $this->sendResponse($posts);
+        $post = $response->json();
+
+        return $this->sendResponse($post['data']['posts']);
     }
 
     /**
