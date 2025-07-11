@@ -20,14 +20,7 @@ class PostController extends BaseController
      */
     public function index()
     {
-        $response = Http::post(url('/graphql'), [
-            'query' => 'query { posts { id user_id caption image user { id name email } comments { id user_id post_id content user { id name email } } likes { id user_id post_id } } }',
-            'variables' => [],
-        ]);
-
-        $post = $response->json();
-
-        return $this->sendResponse($post['data']['posts']);
+        return $this->sendResponse($this->getDataPost());
     }
 
     /**
@@ -38,13 +31,13 @@ class PostController extends BaseController
         try {
             $imagePath = $this->storeImage($request->file('image'));
 
-            $post = Post::create([
+            Post::create([
                 'user_id' => Auth::id(),
                 'caption' => $request->caption,
                 'image'   => $imagePath,
             ]);
 
-            return $this->sendResponse($post->load('user'), 'Post created successfully.', 201);
+            return $this->sendResponse($this->getDataPost(), 'Post created successfully.', 201);
         } catch (\Exception $e) {
             return $this->sendError('Error creating post', $e->getMessage(), 500);
         }
@@ -109,5 +102,17 @@ class PostController extends BaseController
         );
 
         return $path;
+    }
+
+    private function getDataPost()
+    {
+        $response = Http::post(url('/graphql'), [
+            'query' => 'query { posts { id user_id caption image user { id name email } comments { id user_id post_id content user { id name email } } likes { id user_id post_id } } }',
+            'variables' => [],
+        ]);
+
+        $post = $response->json();
+
+        return $post['data']['posts'];
     }
 }
