@@ -56,15 +56,11 @@ class LikeController extends BaseController
     public function destroy(Post $post)
     {
         try {
-            $deleted = $post->likes()
-                ->where('user_id', Auth::id())
-                ->delete();
+            $like = $post->likes()->where('user_id', Auth::id())->firstOrFail();
+            $this->authorize('delete', $like);
+            $like->delete();
 
-            if ($deleted) {
-                return $this->sendResponse(null, 'Like removed successfully');
-            }
-
-            return $this->sendError('Like not found', null, 404);
+            return $this->sendResponse(null, 'Like removed successfully');
         } catch (\Exception $e) {
             return $this->sendError('Error removing like', $e->getMessage(), 500);
         }

@@ -4,7 +4,6 @@ namespace App\Policies\API;
 
 use App\Models\Like;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class LikePolicy
 {

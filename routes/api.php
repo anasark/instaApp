@@ -21,5 +21,6 @@ Route::apiResource('posts', PostController::class)->only(['index', 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('posts', PostController::class)->except(['index', 'show']);
     Route::apiResource('posts.comments', CommentController::class)->only(['store', 'update', 'destroy']);
-    Route::apiResource('posts.likes', LikeController::class)->only(['store', 'destroy']);
+    Route::apiResource('posts.likes', LikeController::class)->only(['store']);
+    Route::delete('/posts/{post}/likes', [LikeController::class, 'destroy']);
 });
