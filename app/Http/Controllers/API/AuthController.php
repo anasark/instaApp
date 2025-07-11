@@ -19,7 +19,7 @@ class AuthController extends BaseController
         $user = User::create($input);
 
         $success['token'] =  $user->createToken('auth_token')->plainTextToken;
-        $success['name'] =  $user->name;
+        $success['user'] =  $user;
 
         return $this->sendResponse($success, 'User register successfully.');
     }
